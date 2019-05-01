@@ -1,0 +1,15 @@
+﻿@page "/"
+
+<h1>Blazor Event Propagation PoC</h1>
+
+This project shows a mechanic of stopping event propagation using a static store of UIMouseEventArgs that need to be stopped.
+
+<RootEventBubbleDestination>
+    <SomeComponent Name="Component A">
+        <SomeComponent PreventBubbling=true Name="Component B">
+            <SomeComponent Name="Component C">
+
+            </SomeComponent>
+        </SomeComponent>
+    </SomeComponent>
+</RootEventBubbleDestination>

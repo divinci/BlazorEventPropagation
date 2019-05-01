@@ -1,0 +1,54 @@
+@inject IJSRuntime JsRuntime
+
+<div class="SomeComponent" onclick="@SomeComponentClick">
+    <h2>@Name</h2>
+    PreventBubbling = @PreventBubbling.ToString()
+    <hr />
+    @Clicks
+    <hr />
+    @ChildContent
+</div>
+
+@functions{
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public bool PreventBubbling { get; set; } = false;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        OnSomeComponentClick = new DOnUIMouseEvent(SomeComponentClick);
+    }
+
+    public async void OnClick(UIMouseEventArgs args)
+    {
+        var task = JsRuntime.InvokeAsync<string>("console.log", $"{Name} clicked.");
+    }
+
+    public string Clicks { get; set; } = "";
+
+    public DOnUIMouseEvent OnSomeComponentClick { get; set; }
+
+    public async void SomeComponentClick(UIMouseEventArgs args)
+    {
+        System.Diagnostics.Trace.WriteLine($"{Name} clicked.");
+
+        var shouldActionEvent = EventManager.ShouldAction(args);
+        System.Diagnostics.Trace.WriteLine($"{Name} shouldActionEvent = {shouldActionEvent}");
+
+        if (shouldActionEvent)
+        {
+            System.Diagnostics.Trace.WriteLine($"{Name} PreventBubbling = {PreventBubbling}");
+            if (PreventBubbling)
+            {
+                EventManager.PreventBubbling(args);
+            }
+            Clicks += " Click";
+        }
+    }
+}
