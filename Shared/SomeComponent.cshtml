@@ -1,54 +1,44 @@
+@inherits EventControlledComponent
 @inject IJSRuntime JsRuntime
 
-<div class="SomeComponent" onclick="@SomeComponentClick">
-    <h2>@Name</h2>
-    PreventBubbling = @PreventBubbling.ToString()
+<div class="SomeComponent" onclick="@(async (args) => EventControlledClick(OnClick, args, PreventBubbling))">
+
+    <h2>
+        @Name
+    </h2>
+
+    <h3>
+        PreventBubbling = @PreventBubbling.ToString()
+    </h3>
+
     <hr />
-    @Clicks
+        @ClickText
     <hr />
+
     @ChildContent
+
 </div>
 
 @functions{
 
     [Parameter]
-    public string Name { get; set; }
+    private string Name { get; set; }
 
     [Parameter]
-    public bool PreventBubbling { get; set; } = false;
+    private bool PreventBubbling { get; set; } = false;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    private RenderFragment ChildContent { get; set; }
 
-    protected override void OnParametersSet()
+    public string ClickText { get; set; } = "";
+
+    public async Task OnClick(UIMouseEventArgs args, bool shouldAction)
     {
-        OnSomeComponentClick = new DOnUIMouseEvent(SomeComponentClick);
-    }
+        await JsRuntime.InvokeAsync<string>("console.log", $"{Name} clicked - ShouldAction - {shouldAction}");
 
-    public async void OnClick(UIMouseEventArgs args)
-    {
-        var task = JsRuntime.InvokeAsync<string>("console.log", $"{Name} clicked.");
-    }
-
-    public string Clicks { get; set; } = "";
-
-    public DOnUIMouseEvent OnSomeComponentClick { get; set; }
-
-    public async void SomeComponentClick(UIMouseEventArgs args)
-    {
-        System.Diagnostics.Trace.WriteLine($"{Name} clicked.");
-
-        var shouldActionEvent = EventManager.ShouldAction(args);
-        System.Diagnostics.Trace.WriteLine($"{Name} shouldActionEvent = {shouldActionEvent}");
-
-        if (shouldActionEvent)
+        if(shouldAction)
         {
-            System.Diagnostics.Trace.WriteLine($"{Name} PreventBubbling = {PreventBubbling}");
-            if (PreventBubbling)
-            {
-                EventManager.PreventBubbling(args);
-            }
-            Clicks += " Click";
+            ClickText = ClickText +" Clicked";
         }
     }
 }

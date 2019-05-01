@@ -1,0 +1,12 @@
+@inherits EventControlledComponent
+@inject IJSRuntime JsRuntime
+
+<div onclick="@ClearEventControlledClick">
+    @ChildContent
+</div>
+
+@functions{
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+}

@@ -4,7 +4,7 @@
 
 This project shows a mechanic of stopping event propagation using a static store of UIMouseEventArgs that need to be stopped.
 
-<RootEventBubbleDestination>
+<EventControlledComponentContainer>
     <SomeComponent Name="Component A">
         <SomeComponent PreventBubbling=true Name="Component B">
             <SomeComponent Name="Component C">
@@ -12,4 +12,4 @@ This project shows a mechanic of stopping event propagation using a static store
             </SomeComponent>
         </SomeComponent>
     </SomeComponent>
-</RootEventBubbleDestination>
+</EventControlledComponentContainer>
